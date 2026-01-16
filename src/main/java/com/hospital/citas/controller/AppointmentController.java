@@ -9,11 +9,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hospital.citas.dto.AppointmentCreateRequest;
 import com.hospital.citas.model.Appointment;
+import com.hospital.citas.model.AppointmentStatus;
 import com.hospital.citas.service.AppointmentService;
 
 @RestController
@@ -46,4 +48,14 @@ public class AppointmentController {
     public Appointment cancel(@PathVariable String id) {
         return service.cancel(id);
     }
+
+    @GetMapping("/agenda")
+    public List<Appointment> agenda(
+    @RequestParam String doctorId,
+    @RequestParam(required = false) String date,
+    @RequestParam(required = false) AppointmentStatus status
+) {
+    return service.findAgenda(doctorId, date, status);
 }
+}
+

@@ -1,6 +1,8 @@
 package com.hospital.citas.service;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
@@ -95,4 +97,31 @@ public class AppointmentService {
         a.setUpdatedAt(Instant.now());
         return appointmentRepo.save(a);
     }
+
+    public List<Appointment> findAgenda(String doctorId, String date, AppointmentStatus status) {
+
+    if (doctorId == null || doctorId.isBlank()) {
+        throw new ConflictException("doctorId es requerido");
+    }
+    if (!doctorRepo.existsById(doctorId)) {
+        throw new NotFoundException("Doctor no encontrado");
+    }
+
+    // sin fecha -> todas del doctor
+    if (date == null || date.isBlank()) {
+        return appointmentRepo.findByDoctorIdOrderByStartTimeAsc(doctorId);
+    }
+
+    LocalDate ld = LocalDate.parse(date); // "2026-01-11"
+    ZoneId zone = ZoneId.of("America/Mexico_City");
+
+    Instant start = ld.atStartOfDay(zone).toInstant();
+    Instant end = ld.plusDays(1).atStartOfDay(zone).toInstant();
+
+    if (status == null) {
+        return appointmentRepo.findByDoctorIdAndStartTimeBetweenOrderByStartTimeAsc(doctorId, start, end);
+    }
+
+    return appointmentRepo.findByDoctorIdAndStatusAndStartTimeBetweenOrderByStartTimeAsc(doctorId, status, start, end);
+}
 }

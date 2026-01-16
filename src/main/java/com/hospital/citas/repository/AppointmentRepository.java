@@ -32,4 +32,13 @@ public interface AppointmentRepository extends MongoRepository<Appointment, Stri
     }
     """)
     List<Appointment> findOverlapsByPatient(String patientId, AppointmentStatus status, Instant newEnd, Instant newStart);
+
+    List<Appointment> findByDoctorIdOrderByStartTimeAsc(String doctorId);
+
+    List<Appointment> findByDoctorIdAndStartTimeBetweenOrderByStartTimeAsc(
+        String doctorId, Instant start, Instant end);
+
+    List<Appointment> findByDoctorIdAndStatusAndStartTimeBetweenOrderByStartTimeAsc(
+        String doctorId, AppointmentStatus status, Instant start, Instant end);
 }
+

@@ -49,6 +49,20 @@ public class DoctorService {
     return repo.save(d);
     }
 
+    public Doctor activate(String id) {
+    Doctor d = findById(id);
+    d.setActive(true);
+    d.setUpdatedAt(Instant.now());
+    return repo.save(d);
+    }
+
+    public void delete(String id) {
+    Doctor d = findById(id);
+    repo.delete(d); 
+    }
+
+
+
    public Doctor update(String id, Doctor updated) {
     Doctor current = findById(id);
 
