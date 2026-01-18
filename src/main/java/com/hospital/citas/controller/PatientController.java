@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.DeleteMapping;
 import com.hospital.citas.model.Patient;
 import com.hospital.citas.service.PatientService;
 
@@ -50,6 +50,16 @@ public class PatientController {
     @PatchMapping("/{id}/deactivate")
     public Patient deactivate(@PathVariable String id) {
         return service.deactivate(id);
+    }
+
+    @PatchMapping("/{id}/activate")
+    public Patient activate(@PathVariable String id) {
+        return service.activate(id);
+    }
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable String id) {
+        service.delete(id);
     }
 }
 

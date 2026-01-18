@@ -40,5 +40,41 @@ public interface AppointmentRepository extends MongoRepository<Appointment, Stri
 
     List<Appointment> findByDoctorIdAndStatusAndStartTimeBetweenOrderByStartTimeAsc(
         String doctorId, AppointmentStatus status, Instant start, Instant end);
+
+
+@Query("""
+{
+  'doctorId': ?0,
+  'status': ?1,
+  'startTime': { $lt: ?2 },
+  'endTime':   { $gt: ?3 },
+  '_id':       { $ne: ?4 }
+}
+""")
+List<Appointment> findOverlapsByDoctorExcludingId(
+  String doctorId, AppointmentStatus status, Instant newEnd, Instant newStart, String excludeId
+);
+
+@Query("""
+{
+  'patientId': ?0,
+  'status': ?1,
+  'startTime': { $lt: ?2 },
+  'endTime':   { $gt: ?3 },
+  '_id':       { $ne: ?4 }
+}
+""")
+List<Appointment> findOverlapsByPatientExcludingId(
+  String patientId, AppointmentStatus status, Instant newEnd, Instant newStart, String excludeId
+);
+
+
+
+
+
+
+
+
+
 }
 

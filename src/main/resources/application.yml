@@ -3,3 +3,17 @@ spring:
     uri: mongodb://localhost:27017/citas_medicas
 server:
   port: 8080
+
+jwt:
+  secret: "f7a2b9e1c4d382a5b6f0e9d8c7b6a5f4e3d2c1b0a987654321"
+  expirationMinutes: 240
+
+app:
+  cors:
+    allowed-origins: "http://localhost:4200"
+
+appsecurity:
+  user:
+    name: "admin"
+    password: "admin123"
+    role: "ADMIN"

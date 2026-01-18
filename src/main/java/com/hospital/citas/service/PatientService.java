@@ -60,4 +60,16 @@ if (patient.getEmail() != null && repo.existsByEmailIgnoreCase(patient.getEmail(
         p.setUpdatedAt(Instant.now());
         return repo.save(p);
     }
+
+    public Patient activate(String id) {
+    Patient p = findById(id);
+    p.setActive(true);
+    p.setUpdatedAt(Instant.now());
+    return repo.save(p);
+    }
+    public void delete(String id) {
+    Patient p = findById(id); 
+    repo.delete(p);
+}
+
 }

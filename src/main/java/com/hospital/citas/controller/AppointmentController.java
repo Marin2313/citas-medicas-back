@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
+import com.hospital.citas.dto.AppointmentRescheduleRequest;
 import com.hospital.citas.dto.AppointmentCreateRequest;
 import com.hospital.citas.model.Appointment;
 import com.hospital.citas.model.AppointmentStatus;
@@ -57,5 +57,16 @@ public class AppointmentController {
 ) {
     return service.findAgenda(doctorId, date, status);
 }
+
+    @PatchMapping("/{id}/reschedule")
+    public Appointment reschedule(@PathVariable String id, @RequestBody AppointmentRescheduleRequest req) {
+        return service.reschedule(id, req);
+    }
+
+
+
+
+
+
 }
 

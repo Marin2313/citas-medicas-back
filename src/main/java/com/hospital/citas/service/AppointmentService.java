@@ -9,6 +9,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.hospital.citas.dto.AppointmentCreateRequest;
+import com.hospital.citas.dto.AppointmentRescheduleRequest;
 import com.hospital.citas.exception.ConflictException;
 import com.hospital.citas.exception.NotFoundException;
 import com.hospital.citas.model.Appointment;
@@ -123,5 +124,41 @@ public class AppointmentService {
     }
 
     return appointmentRepo.findByDoctorIdAndStatusAndStartTimeBetweenOrderByStartTimeAsc(doctorId, status, start, end);
+}
+
+public Appointment reschedule(String id, AppointmentRescheduleRequest req) {
+    if (req == null || req.startTime == null) {
+        throw new ConflictException("startTime es requerido");
+    }
+
+    Appointment a = findById(id);
+
+    if (a.getStatus() == AppointmentStatus.CANCELED) {
+        throw new ConflictException("No se puede reagendar una cita cancelada");
+    }
+
+    Instant start = req.startTime;
+    Instant end = start.plus(30, ChronoUnit.MINUTES);
+
+    boolean overlapsDoctor = !appointmentRepo
+        .findOverlapsByDoctorExcludingId(a.getDoctorId(), AppointmentStatus.SCHEDULED, end, start, id)
+        .isEmpty();
+
+    if (overlapsDoctor) {
+        throw new ConflictException("El doctor ya tiene una cita en ese horario");
+    }
+
+    boolean overlapsPatient = !appointmentRepo
+        .findOverlapsByPatientExcludingId(a.getPatientId(), AppointmentStatus.SCHEDULED, end, start, id)
+        .isEmpty();
+
+    if (overlapsPatient) {
+        throw new ConflictException("El paciente ya tiene una cita en ese horario");
+    }
+
+    a.setStartTime(start);
+    a.setEndTime(end);
+    a.setUpdatedAt(Instant.now());
+    return appointmentRepo.save(a);
 }
 }
